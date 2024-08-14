@@ -75,11 +75,14 @@ class ArtifactReconstruct:
 
         # plt.show()
 
-        return evecs
+        return evecs, evals
 
-    def generate_maps(self, evecs: np.ndarray, fg: np.ndarray):
+    def _generate_maps(self, evecs: np.ndarray, fg: np.ndarray):
 
         covS = np.cov(fg)
+        if evecs.ndim != 2:
+            raise ValueError("evecs should be a 2D array")
+
         Maps = np.zeros_like(evecs)
 
         for counter in range(evecs.shape[1]):
@@ -109,6 +112,8 @@ class ArtifactReconstruct:
             results["ged"] = self._relative_covariance_analysis(
                 fg_centered, bg_centered
             )
-            Maps = self.generate_maps(results["ged"], fg_centered)
+            evecs_f, _ = results["ged"]
+
+            Maps = self._generate_maps(np.array(evecs_f), fg_centered)
 
         return results, Maps
