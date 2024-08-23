@@ -11,6 +11,7 @@ class ArtifactReconstruct:
         use_covariance: bool = True,
         type: str = "GED",
         normalize: bool = False,
+        vis_results: bool = True,
         verbose: bool = False,
     ):
         """
@@ -24,6 +25,7 @@ class ArtifactReconstruct:
         self.type = type
         self.normalize = normalize
         self.verbose = verbose
+        self.vis_results = vis_results
 
     def _check_dimensions(self, data: np.ndarray):
         return data if data.shape[0] < data.shape[1] else data.T
@@ -100,9 +102,7 @@ class ArtifactReconstruct:
         Maps = None
 
         if self.type == "cpca":
-            results["contrastive pca"] = self._covariance_analysis(
-                fg_centered, bg_centered, alpha
-            )
+            results["cpca"] = self._covariance_analysis(fg_centered, bg_centered, alpha)
             Maps = self.generate_maps(
                 results["cpca"], fg_centered
             )  # TODO should it be fg_centered?
@@ -115,5 +115,19 @@ class ArtifactReconstruct:
             evecs_f, _ = results["ged"]
 
             Maps = self._generate_maps(np.array(evecs_f), fg_centered)
+
+        if self.vis_results == True:
+
+            evecs, evals = results["ged"]
+            # plot the eigenspectrum
+            plt.figure()
+            plt.plot(evals / np.max(evals), "s-", markersize=5, markerfacecolor="k")
+            plt.xlim([-0.5, 20.5])
+            plt.title("GED eigenvalues")
+            plt.xlabel("Component number")
+            plt.ylabel("Power ratio (norm-$\lambda$)")
+
+            # component time series
+            # comp_ts = evecs[:, 0].T @ Artifactual_sim # TODO Visualize individual components
 
         return results, Maps
