@@ -1,0 +1,117 @@
+#%% Import the necessary libraries
+
+import numpy as np
+from scipy.signal import butter, filtfilt
+import mne
+from mne.preprocessing import ICA
+from mne_icalabel import label_components
+from sklearn.decomposition import PCA
+from raw_gen import mneObjectGenerator
+
+
+#%% Load the data
+folder_path = '/path/to/Example Data/'
+
+Ground_Truth = np.load('Example Data/example_GT.npy')
+Artifactual_EO = np.load('Example Data/example_Artifactual_EO.npy')
+imu_data = np.load('Example Data/example_motion.npy')
+calibration_data = np.load('Example Data/example_calib.npy')
+
+#%% Step1: EMG for muscle artifact
+def Gen_EMG(Sampling, SignalLength, FreqRange):
+    Sigma = 250
+    b, a = butter(4, np.array(FreqRange) / (0.5 * Sampling), btype="bandpass")
+    noise = np.random.randn(SignalLength) * Sigma
+    noise = filtfilt(b, a, noise)
+    return noise
+
+#%% Step2: eyeblink artifact
+
+def Gen_eyeblink(raw, sfreq):
+
+    ica_obj = mne.preprocessing.ICA(
+        n_components=0.99,
+        method="infomax",
+        max_iter="auto",
+        random_state=1,
+        fit_params=dict(extended=True),
+    ).fit(raw)
+
+    ic_labels = label_components(raw, ica_obj, method="iclabel")
+    labels = ic_labels["labels"]
+
+    eyeblink_idx = np.where(np.array(labels) == "eye blink")[0]
+
+    ica_sources = ica_obj.get_sources(raw)
+    eyeblink_signal = np.sum(ica_sources.get_data(picks=eyeblink_idx), axis=0)
+
+    return eyeblink_signal
+
+
+#%% Step3: Motion artifact
+def Gen_motion(imudata):
+
+    pca = PCA(n_components=3)
+    imu_pca = pca.fit_transform(imudata.T).T
+    return imu_pca[0, :]
+
+
+# %% Generate artifactual data
+
+# find a random number for channels to add artifact (more than 5)
+nch = np.random.randint(5, Ground_Truth.shape[0])
+chosen_channels = np.random.choice(Ground_Truth.shape[0], nch, replace=False)
+coefficients = np.random.uniform(0.1, 0.5, nch)
+
+sfreq = 500
+Artifactual_sim = np.copy(Ground_Truth)
+noise = Gen_EMG(sfreq, Ground_Truth.shape[1], FreqRange=[20, 80])
+
+for i, channel in enumerate(chosen_channels):
+    artifact = coefficients[i] * noise
+    Artifactual_sim[channel, :] += artifact
+
+mneObjectGenerator(Artifactual_sim / 1e6, sfreq).plot(title="EMG added")
+
+
+nch = np.random.randint(5, Ground_Truth.shape[0])
+chosen_channels = np.random.choice(Ground_Truth.shape[0], nch, replace=False)
+coefficients = np.random.uniform(0.1, 0.5, nch)
+
+noise = Gen_eyeblink(
+    mneObjectGenerator(Artifactual_EO, sfreq), sfreq
+)
+for i, channel in enumerate(chosen_channels):
+    artifact = coefficients[i] * noise
+    Artifactual_sim[channel, :] += artifact
+mneObjectGenerator(Artifactual_sim / 1e6, sfreq).plot(title="EMG added, Eye blink added")
+
+
+
+nch = np.random.randint(5, Ground_Truth.shape[0])
+chosen_channels = np.random.choice(Ground_Truth.shape[0], nch, replace=False)
+coefficients = np.random.uniform(0.1, 0.5, nch)
+
+for i, channel in enumerate(chosen_channels):
+    sfreq = 500
+    num_samples = 90000
+    noise = Gen_motion(imu_data)
+    artifact = coefficients[i] * noise
+    Artifactual_sim[channel, :] += artifact
+mneObjectGenerator(Artifactual_sim / 1e6, 500).plot(title="EMG added, Eye blink added, motion added")
+
+
+# %% GED
+import contrast_cleaning
+from contrast_cleaning import ArtifactReconstruct
+
+artifact_reconstruct = ArtifactReconstruct(
+    use_covariance=True, type="GED", normalize=False, vis_results= True, verbose=False
+)
+
+
+alpha = 1
+results, Maps = artifact_reconstruct.perform_analysis(
+    Artifactual_sim, calibration_data, alpha
+)
+# %%
