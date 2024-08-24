@@ -43,16 +43,22 @@ To run the example code, follow these steps:
     The script will run the analysis and display the results in your console.
 
 ## Results from the Figs Directory
-Below are some key figures illustrating the example results from simulated data:
+Below are some key figures illustrating the example results:
 
 - **Simulated Data:**
+
   ![Simulated data](figs/Artifactual.png)
 
 - **Post-GED Analysis:**
+
   ![Post-GED simulated data](figs/PostGED.png)
 
 - **GED Components:**
+
   ![GED Components](figs/GED_Components.png)
+
+- **First Component Time Series:**
+  ![FirstComponentTimeSeries](figs/FirstComponentTimeSeries.png)
 
 ## Reference
 [A tutorial on generalized eigendecomposition for denoising, contrast enhancement, and dimension reduction in multichannel electrophysiology](https://www.sciencedirect.com/science/article/pii/S1053811921010806)
