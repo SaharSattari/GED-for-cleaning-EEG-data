@@ -12,11 +12,9 @@ import numpy as np
 from pathlib import Path
 
 
-def mneObjectGenerator(data, fs):
+def mneObjectGenerator(data, fs, path_to_channel_location):
 
-    # Load the .mat file
-    Path_to_chan = "Example Data/chanlocs.mat"
-    mat_data = scipy.io.loadmat(Path_to_chan)
+    mat_data = scipy.io.loadmat(path_to_channel_location)
     channels = mat_data["chanlocs"]
 
     # Extract channel names
