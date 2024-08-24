@@ -4,10 +4,6 @@ This project is dedicated to improving the quality of EEG recordings by identify
 
 ## Table of Contents
 - [Introduction](#introduction)
-- [Data Collection](#data-collection)
-- [Artifact Detection](#artifact-detection)
-- [Artifact Mitigation](#artifact-mitigation)
-- [Results](#results)
 - [Running the Example](#running-the-example)
 - [Results from the Figs Directory](#results-from-the-figs-directory)
 - [Contributing](#contributing)
@@ -16,18 +12,6 @@ This project is dedicated to improving the quality of EEG recordings by identify
 ## Introduction
 Motion artifacts in EEG recordings, whether from subject movement, electrode displacement, or environmental interference, introduce noise that can obscure meaningful brain activity. This project focuses on developing advanced methods for detecting and mitigating these artifacts, thereby improving the clarity and usability of EEG data.
 
-## Data Collection
-Our dataset comprises EEG recordings from human subjects engaged in various tasks under different conditions, capturing both clean and artifact-contaminated data. The data collection process is conducted with strict adherence to ethical guidelines, ensuring informed consent and participant safety.
-
-## Artifact Detection
-We utilize cutting-edge signal processing techniques and machine learning algorithms to distinguish between motion artifacts and genuine brain signals. By analyzing both temporal and spectral features, we aim to create accurate, real-time artifact detection methods that enhance EEG data integrity.
-
-## Artifact Mitigation
-After detecting motion artifacts, we explore several strategies to minimize their impact. Techniques such as signal interpolation, adaptive filtering, and artifact rejection are employed to restore EEG data quality, enabling precise analysis and interpretation.
-
-## Results
-Our results will be showcased through performance metrics, including artifact detection accuracy and mitigation effectiveness. We will also provide a comparative evaluation of our methods against existing benchmarks, highlighting improvements in EEG data quality.
-
 ## Running the Example
 
 To run the example code, follow these steps:
@@ -35,13 +19,13 @@ To run the example code, follow these steps:
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/username/repository.git
+    git clone git@github.com:SaharSattari/ged_eeg_analysis.git
     ```
 
 2. **Navigate to the project directory:**
 
     ```bash
-    cd repository
+    cd ged_eeg_analysis
     ```
 
 3. **Install the required dependencies:**
@@ -59,7 +43,7 @@ To run the example code, follow these steps:
     The script will run the analysis and display the results in your console.
 
 ## Results from the Figs Directory
-Below are some key figures illustrating our results:
+Below are some key figures illustrating the example results from simulated data:
 
 - **Simulated Data:**
   ![Simulated data](figs/Artifactual.png)
@@ -70,8 +54,9 @@ Below are some key figures illustrating our results:
 - **GED Components:**
   ![GED Components](figs/GED_Components.png)
 
-## Contributing
+## Reference
 [A tutorial on generalized eigendecomposition for denoising, contrast enhancement, and dimension reduction in multichannel electrophysiology](https://www.sciencedirect.com/science/article/pii/S1053811921010806)
+
 [Exploring patterns enriched in a dataset with contrastive principal component analysis](https://www.nature.com/articles/s41467-018-04608-8)
 
 ## License
