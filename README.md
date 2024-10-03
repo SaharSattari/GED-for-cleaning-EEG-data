@@ -65,5 +65,3 @@ Below are some key figures illustrating the example results:
 
 [Exploring patterns enriched in a dataset with contrastive principal component analysis](https://www.nature.com/articles/s41467-018-04608-8)
 
-## License
-This project is licensed under the [MIT License](LICENSE). For more details, refer to the LICENSE file.
